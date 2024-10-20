@@ -17,6 +17,7 @@ import InviteQR from '../forms/InviteQR'
 const Layout = ({ children }) => {
     const { albumId, userId, token } = useParams()
     const location = useLocation()
+    const navigate = useNavigate()
     const { fetchCaptures } = useFetchCaptures(albumId, userId, token)
     
     const asideRef = useRef(null)
@@ -32,6 +33,22 @@ const Layout = ({ children }) => {
         setModalContent({title, content})
         setModalShow(true)
     }
+
+    useEffect(() => {
+        if (albumId) localStorage.setItem('albumId', albumId)
+        if (userId) localStorage.setItem('userId', userId)
+        if (token) localStorage.setItem('token', token)
+    }, [albumId, userId, token])
+
+    useEffect(() => {
+        const storedAlbumId = localStorage.getItem('albumId')
+        const storedUserId = localStorage.getItem('userId')
+        const storedToken = localStorage.getItem('token')
+
+        if((!albumId || !userId || !token) && storedAlbumId && storedUserId && storedToken) {
+            navigate(`/photographer/album/${storedAlbumId}/user/${storedUserId}/${storedToken}`)
+        }
+    }, [token, albumId, userId, navigate])
 
     useEffect(() => {
         animateOnScroll()
